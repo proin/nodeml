@@ -2,5 +2,7 @@
 
 ((app)=> {
     app.sample = require('./libs/sample');
-    app.bayes = require('./libs/bayes');
+
+    app.ml = {};
+    app.ml.Bayes = require('./libs/ml/bayes');
 })(module.exports);

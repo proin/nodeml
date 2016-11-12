@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = ()=> {
-    let app = {};
+module.exports = function () {
+    let app = this;
 
     let assert = (condition, message)=> {
         if (!condition) {
@@ -62,6 +62,8 @@ module.exports = ()=> {
     });
 
     app.test = (dataset, opts)=> new Promise((resolve)=> {
+        if (!opts) opts = {};
+
         assert(dataset, `dataset undefined`);
         if (dataset.constructor != Array) dataset = [dataset];
 
@@ -114,7 +116,11 @@ module.exports = ()=> {
         }
 
         if (labels) result.precision = precision / dataset.length;
-        resolve(result);
+
+        if (dataset.length == 1) resolve(result.answer[0]);
+        else if (!opts.prob && !opts.labels) resolve(result.answer);
+        else resolve(result);
+
     });
 
     return app;
