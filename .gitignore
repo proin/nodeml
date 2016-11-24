@@ -1,7 +1,8 @@
 node_modules
-test
+test*
 graph
 .idea
 .git
 .DS_Store
 npm-debug.log
+images
