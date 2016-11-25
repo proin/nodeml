@@ -15,18 +15,20 @@ module.exports = function () {
 
     let _trained = null;
 
-    app.setTrain = (trained)=> {
+    app.setModel = (trained)=> {
         assert(trained.constructor == Object, `dataset undefined`);
         _trained = trained;
     };
 
-    app.getTrain = ()=> _trained;
+    app.getModel = ()=> _trained;
 
     app.train = (dataset, labels)=> {
         assert(dataset, `dataset undefined`);
         assert(labels, `labels undefined`);
-        if (dataset[0].constructor != Array && dataset[0].constructor != Object) dataset = [dataset];
-        if (labels.constructor != Array) labels = [labels];
+
+        if (Array.isArray(dataset) === false) dataset = [dataset];
+        if (Array.isArray(labels) === false) labels = [labels];
+
         assert(dataset.length === labels.length, `mismatched array length`);
 
         if (!_trained) _trained = {};
@@ -54,24 +56,15 @@ module.exports = function () {
         return _trained;
     };
 
-    app.test = (dataset, opts)=> {
-        if (!opts) opts = {};
-
+    app.test = (dataset)=> {
         assert(dataset, `dataset undefined`);
-        if (dataset.constructor != Array) dataset = [dataset];
-
-        let labels = opts.labels;
-        let probability = opts.prob;
-        if (labels && labels.constructor != Array) labels = [labels];
+        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false) dataset = [dataset];
+        if (Array.isArray(dataset) === false) dataset = [dataset];
 
         let _dic = _trained.dic;
         let _label = _trained.label;
 
-        let precision = 0;
-
-        let result = {};
-        result.answer = [];
-        if (probability) result.prob = [];
+        let result = [];
 
         for (let i = 0; i < dataset.length; i++) {
             let prob = {};
@@ -100,18 +93,10 @@ module.exports = function () {
                 }
             }
 
-            result.answer.push(answer);
-
-            if (probability) result.prob.push(prob);
-
-            if (labels && labels[i] && labels[i] == answer)
-                precision++;
+            result.push({answer: answer, score: prob});
         }
 
-        if (labels) result.precision = precision / dataset.length;
-
-        if (dataset.length == 1) return result.answer[0];
-        else if (!opts.prob && !opts.labels) return result.answer;
+        if (dataset.length == 1) return result[0];
         else return result;
     };
 

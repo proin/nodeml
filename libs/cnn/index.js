@@ -98,6 +98,7 @@ module.exports = function () {
 
     // Class: Vol
     let Vol = function (sx, sy, depth, c) {
+        this.constructor = 'CnnVolume';
         if (Object.prototype.toString.call(sx) === '[object Array]') {
             this.sx = 1;
             this.sy = 1;
@@ -1652,7 +1653,6 @@ module.exports = function () {
             this.sampleCandidates();
         }
     };
-
     MagicNet.prototype = {
         sampleFolds: function () {
             let N = this.data.length;
@@ -1848,6 +1848,75 @@ module.exports = function () {
     };
 
     app.MagicNet = MagicNet;
+
+    // Class: Functions
+    let net = new Net();
+
+    let setModel = (model)=> {
+        if (Array.isArray(model)) net.makeLayers(model);
+        else if (fs.existsSync(model)) net.fromJSON(JSON.parse(fs.readFileSync(model, 'utf-8')));
+    };
+    let getModel = ()=> net.toJSON();
+
+    let trainOpts = {};
+    let setOptions = (options)=> trainOpts = options;
+
+    let __trainer = null;
+
+    let __checkVolume = (data)=> {
+        if (Array.isArray(data)) {
+            data = new Vol(data);
+        } else if (typeof data == 'object' && data.constructor !== 'CnnVolume') {
+            let row = [];
+            for (let key in data)
+                row[key * 1] = data;
+            data = new Vol(row);
+        }
+        return data;
+    };
+
+    let train = (dataset, labels)=> {
+        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false && typeof dataset[0] !== 'object') dataset = [dataset];
+        if (Array.isArray(dataset) === false) dataset = [dataset];
+        if (Array.isArray(labels) === false) labels = [labels];
+
+        if (!trainOpts) trainOpts = {};
+        if (!trainOpts.learning_rate) trainOpts.learning_rate = 0.01;
+        if (!trainOpts.momentum) trainOpts.momentum = 0.9;
+        if (!trainOpts.batch_size) trainOpts.batch_size = 2;
+        if (!trainOpts.l2_decay) trainOpts.l2_decay = 0.01;
+
+        if (!__trainer) __trainer = new Trainer(net, trainOpts);
+        for (let i = 0; i < dataset.length; i++)
+            __trainer.train(__checkVolume(dataset[i]), labels[i] * 1);
+    };
+
+    let test = (dataset)=> {
+        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false) dataset = [dataset];
+        if (Array.isArray(dataset) === false) dataset = [dataset];
+
+        let result = [];
+        for (let i = 0; i < dataset.length; i++) {
+            let data = __checkVolume(dataset[i]);
+            let avg = net.forward(data);
+            let preds = [];
+            for (let k = 0; k < avg.w.length; k++)
+                preds.push({k: k, p: avg.w[k]});
+            preds.sort(function (a, b) {
+                return a.p < b.p ? 1 : -1;
+            });
+            result.push({answer: preds[0].k, score: preds});
+        }
+
+        if (result.length == 1) return result[0];
+        else return result;
+    };
+
+    app.configure = setOptions;
+    app.setModel = setModel;
+    app.getModel = getModel;
+    app.train = train;
+    app.test = test;
 
     return app;
 };

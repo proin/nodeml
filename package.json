@@ -1,6 +1,6 @@
 {
   "name": "nodeml",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "node.js machine learning package",
   "main": "index.js",
   "scripts": {},
