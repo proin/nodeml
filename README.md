@@ -156,11 +156,23 @@ let model = cnn.getModel();
 let str = JSON.stringify(model);
 ```
 
+---
+
+### Evaluation
+
+```js
+let {evaluate} = require('nodeml');
+
+let original = [1, 2, 1, 1, 3]; // original label
+let result = [1, 1, 2, 1, 3]; // train result label
+
+// exec evaluate, this contains accuracy, micro/macro precision/recall/f-measure
+let evaluation = evaluate(original, result);
+```
+
 ## Todo
 
 - Support additional models
     - SVM
     - RNN (LSTM)
     - K-Means
-- Evaluation tools
-    - calculate precision, recall from result

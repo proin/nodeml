@@ -1,18 +1,22 @@
 {
-  "name": "nodeml",
-  "version": "0.0.2",
-  "description": "node.js machine learning package",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [
-    "rnn",
-    "cnn",
-    "machine-learning",
-    "deep-learning"
-  ],
-  "author": "proin",
-  "license": "MIT",
-  "dependencies": {
-    "canvas": "^1.6.2"
-  }
+    "name": "nodeml",
+    "version": "0.0.3",
+    "description": "node.js machine learning package",
+    "author": "proin",
+    "main": "index.js",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/proin/nodeml"
+    },
+    "keywords": [
+        "rnn",
+        "cnn",
+        "machine-learning",
+        "deep-learning"
+    ],
+    "scripts": {},
+    "dependencies": {
+        "canvas": "^1.6.2"
+    }
 }

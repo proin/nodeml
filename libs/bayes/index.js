@@ -26,7 +26,7 @@ module.exports = function () {
         assert(dataset, `dataset undefined`);
         assert(labels, `labels undefined`);
 
-        if (Array.isArray(dataset) === false) dataset = [dataset];
+        if (Array.isArray(dataset) && (typeof dataset[0] !== 'object')) dataset = [dataset];
         if (Array.isArray(labels) === false) labels = [labels];
 
         assert(dataset.length === labels.length, `mismatched array length`);
@@ -56,9 +56,11 @@ module.exports = function () {
         return _trained;
     };
 
-    app.test = (dataset)=> {
+    app.test = (dataset, options)=> {
+        if (!options) options = {};
+
         assert(dataset, `dataset undefined`);
-        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false) dataset = [dataset];
+        if (Array.isArray(dataset) && (typeof dataset[0] !== 'object')) dataset = [dataset];
         if (Array.isArray(dataset) === false) dataset = [dataset];
 
         let _dic = _trained.dic;
@@ -93,7 +95,8 @@ module.exports = function () {
                 }
             }
 
-            result.push({answer: answer, score: prob});
+            if (options.score) result.push({answer: answer, score: prob});
+            else result.push(answer);
         }
 
         if (dataset.length == 1) return result[0];
