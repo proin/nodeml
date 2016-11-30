@@ -1892,6 +1892,7 @@ module.exports = function () {
     };
 
     let test = (dataset, options)=> {
+        if (!options) options = {};
         if (Array.isArray(dataset) === false) dataset = [dataset];
         else if (typeof dataset[0] != 'object') dataset = [dataset];
 
