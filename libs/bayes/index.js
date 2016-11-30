@@ -26,7 +26,7 @@ module.exports = function () {
         assert(dataset, `dataset undefined`);
         assert(labels, `labels undefined`);
 
-        if (Array.isArray(dataset)) dataset = [dataset];
+        if (Array.isArray(dataset) === false) dataset = [dataset];
         if (Array.isArray(labels) === false) labels = [labels];
 
         assert(dataset.length === labels.length, `mismatched array length`);
