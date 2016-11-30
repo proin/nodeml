@@ -27,6 +27,8 @@ module.exports = function () {
         assert(labels, `labels undefined`);
 
         if (Array.isArray(dataset) === false) dataset = [dataset];
+        else if (typeof dataset[0] != 'object') dataset = [dataset];
+
         if (Array.isArray(labels) === false) labels = [labels];
 
         assert(dataset.length === labels.length, `mismatched array length`);
@@ -61,6 +63,7 @@ module.exports = function () {
 
         assert(dataset, `dataset undefined`);
         if (Array.isArray(dataset) === false) dataset = [dataset];
+        else if (typeof dataset[0] != 'object') dataset = [dataset];
 
         let _dic = _trained.dic;
         let _label = _trained.label;

@@ -1876,8 +1876,8 @@ module.exports = function () {
     };
 
     let train = (dataset, labels)=> {
-        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false && typeof dataset[0] !== 'object') dataset = [dataset];
         if (Array.isArray(dataset) === false) dataset = [dataset];
+        else if (typeof dataset[0] != 'object') dataset = [dataset];
         if (Array.isArray(labels) === false) labels = [labels];
 
         if (!trainOpts) trainOpts = {};
@@ -1891,9 +1891,9 @@ module.exports = function () {
             __trainer.train(__checkVolume(dataset[i]), labels[i] * 1);
     };
 
-    let test = (dataset)=> {
-        if (Array.isArray(dataset) && Array.isArray(dataset[0]) === false) dataset = [dataset];
+    let test = (dataset, options)=> {
         if (Array.isArray(dataset) === false) dataset = [dataset];
+        else if (typeof dataset[0] != 'object') dataset = [dataset];
 
         let result = [];
         for (let i = 0; i < dataset.length; i++) {
@@ -1905,7 +1905,11 @@ module.exports = function () {
             preds.sort(function (a, b) {
                 return a.p < b.p ? 1 : -1;
             });
-            result.push({answer: preds[0].k, score: preds});
+
+            if (options.score)
+                result.push({answer: preds[0].k, score: preds});
+            else
+                result.push(preds[0].k);
         }
 
         if (result.length == 1) return result[0];
