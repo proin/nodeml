@@ -4,6 +4,23 @@
     const fs = require('fs');
     const path = require('path');
 
+    app.movie = ()=> {
+        let dataset = fs.readFileSync(path.resolve(__dirname, 'res', 'movie.txt'), 'utf-8').split('\n');
+        let labels = [];
+        for (let i = 0; i < dataset.length; i++) {
+            if (!dataset[i] || dataset[i].length == 0) {
+                dataset.splice(i, 1);
+                continue;
+            }
+
+            dataset[i] = dataset[i].split(' ');
+            let [movie_id, user_id, rating, like] = dataset[i];
+            dataset[i] = {movie_id: movie_id, user_id: user_id, rating: rating, like: like};
+        }
+
+        return dataset;
+    };
+
     app.yeast = ()=> {
         let dataset = fs.readFileSync(path.resolve(__dirname, 'res', 'yeast.txt'), 'utf-8').split('\n');
         let labels = [];

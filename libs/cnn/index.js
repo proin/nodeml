@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const Canvas = require('canvas');
 
 module.exports = function () {
     let app = this;
@@ -226,53 +225,10 @@ module.exports = function () {
 
         return W;
     };
-    let img2vol = function (img_src, options) {
-        if (!options) options = {};
-        let {convert_grayscale, resize} = options;
-        if (!resize) resize = 1;
-        if (!convert_grayscale) convert_grayscale = false;
-
-        var data = fs.readFileSync(img_src);
-        var image = new Canvas.Image;
-        image.src = data;
-
-        let canvas = new Canvas(Math.round(image.width / resize), Math.round(image.height / resize));
-        let ctx = canvas.getContext('2d');
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-        let img_data = null;
-
-        try {
-            img_data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        } catch (e) {
-            if (e.name === 'IndexSizeError') return false;
-            else throw e;
-        }
-
-        let p = img_data.data;
-        let W = canvas.width;
-        let H = canvas.height;
-        let pv = [];
-        for (let i = 0; i < p.length; i++)
-            pv.push(p[i] / 255.0 - 0.5);
-        let x = new Vol(W, H, 4, 0.0);
-        x.w = pv;
-
-        if (convert_grayscale) {
-            let x1 = new convnetjs.Vol(W, H, 1, 0.0);
-            for (let i = 0; i < W; i++)
-                for (let j = 0; j < H; j++)
-                    x1.set(i, j, 0, x.get(i, j, 0));
-            x = x1;
-        }
-
-        return x;
-    };
 
     // set Volume
     app.Vol = Vol;
     app.augment = augment;
-    app.img2vol = img2vol;
 
     // Class: Layers
     let ConvLayer = function (opt) {

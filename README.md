@@ -1,8 +1,19 @@
 # nodeml
 
-Machine Learning Framework for Node
+> Machine Learning Framework for Node
 
-## How to Use
+## Summary
+
+- Classification
+    - `nodeml.Bayes`: Bayes
+    - `nodeml.CNN`: Convolutional Neural Network (CNN)
+- Recommendation
+    - `nodeml.CF`: User based Collaborative Filtering
+- Evaluation
+    - `nodeml.accuracy`: Precision, Recall, F-Measure, Accuracy
+    - `nodeml.ndcg`: NDCG
+
+## Installation
 
 installation on your project
 
@@ -158,7 +169,36 @@ let str = JSON.stringify(model);
 
 ---
 
-### Evaluation
+### nodeml.CF
+
+Collaborative Filtering Function
+
+```js
+const {CF, evaluation} = require('../index');
+
+let train = [[1, 1, 2], [1, 2, 2], [1, 4, 5], [2, 3, 2],
+    [2, 5, 1], [3, 1, 2], [3, 2, 3], [3, 3, 3]];
+let test = [[3, 4, 1]];
+
+const cf = new CF();
+cf.train(train);
+let gt = cf.gt(test);
+let result = cf.recommendGT(gt, 1);
+
+let ndcg = evaluation.ndcg(gt, result);
+
+console.log(gt);
+console.log(result);
+console.log(ndcg);
+```
+
+#### train: Function
+
+---
+
+### nodeml.evaluate
+
+#### accuracy: Function (gt, result) => {precision, recall, f-measure, accuracy}
 
 ```js
 let {evaluate} = require('nodeml');
@@ -167,12 +207,17 @@ let original = [1, 2, 1, 1, 3]; // original label
 let result = [1, 1, 2, 1, 3]; // train result label
 
 // exec evaluate, this contains accuracy, micro/macro precision/recall/f-measure
-let evaluation = evaluate(original, result);
+let accuracy = evaluate.accuracy(original, result);
 ```
 
-## Todo
+#### ndcg: Function (gt, result) => 0 ~ 1 ndcg value
 
-- Support additional models
-    - SVM
-    - RNN (LSTM)
-    - K-Means
+```js
+let {CF, evaluate} = require('nodeml');
+const cf = new CF();
+let gt = cf.gt(test, 'user_id', 'movie_id', 'rating');
+
+let result = cf.recommandToUsers(users, 40);
+
+let ndcg = evaluation.ndcg(gt, result);
+```

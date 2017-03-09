@@ -1,6 +1,6 @@
 {
     "name": "nodeml",
-    "version": "0.0.7",
+    "version": "0.1.0",
     "description": "node.js machine learning package",
     "author": "proin",
     "main": "index.js",
@@ -17,6 +17,5 @@
     ],
     "scripts": {},
     "dependencies": {
-        "canvas": "^1.6.2"
     }
 }
