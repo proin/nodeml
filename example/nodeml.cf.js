@@ -27,7 +27,7 @@ let users = [];
 for (let user in gt) {
     gtr[user] = gt[user];
     users.push(user);
-    if (users.length >= 100) break;
+    if (users.length === 100) break;
 }
 
 // recommend for 100 users, each 40 movie

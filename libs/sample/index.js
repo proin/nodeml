@@ -1,10 +1,10 @@
 'use strict';
 
-((app)=> {
+((app) => {
     const fs = require('fs');
     const path = require('path');
 
-    app.movie = ()=> {
+    app.movie = () => {
         let dataset = fs.readFileSync(path.resolve(__dirname, 'res', 'movie.txt'), 'utf-8').split('\n');
         let labels = [];
         for (let i = 0; i < dataset.length; i++) {
@@ -21,7 +21,23 @@
         return dataset;
     };
 
-    app.yeast = ()=> {
+    app.iris = () => {
+        let dataset = fs.readFileSync(path.resolve(__dirname, 'res', 'iris.data'), 'utf-8').split('\n');
+        let labels = [];
+        for (let i = 0; i < dataset.length; i++) {
+            if (!dataset[i] || dataset[i].length == 0) {
+                dataset.splice(i, 1);
+                continue;
+            }
+
+            dataset[i] = dataset[i].split(',');
+            labels[i] = dataset[i].splice(dataset[i].length - 1, 1)[0];
+        }
+
+        return {dataset: dataset, labels: labels};
+    };
+
+    app.yeast = () => {
         let dataset = fs.readFileSync(path.resolve(__dirname, 'res', 'yeast.txt'), 'utf-8').split('\n');
         let labels = [];
         for (let i = 0; i < dataset.length; i++) {
@@ -38,7 +54,7 @@
         return {dataset: dataset, labels: labels};
     };
 
-    app.bbc = ()=> {
+    app.bbc = () => {
         let mtx = fs.readFileSync(path.resolve(__dirname, 'res', 'bbc.mtx'), 'utf-8').split('\n');
         let classes = fs.readFileSync(path.resolve(__dirname, 'res', 'bbc.classes'), 'utf-8').split('\n');
 

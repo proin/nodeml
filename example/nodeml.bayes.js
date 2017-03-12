@@ -19,10 +19,10 @@ console.log(result);
 
 bayes = new Bayes();
 
-const bbc = sample.bbc();
+const bulk = sample.iris();
 
-bayes.train(bbc.dataset, bbc.labels);
-result = bayes.test(bbc.dataset);
-let evaluation = evaluate.accuracy(bbc.labels, result);
+bayes.train(bulk.dataset, bulk.labels);
+result = bayes.test(bulk.dataset);
+let evaluation = evaluate.accuracy(bulk.labels, result);
 
-console.log(evaluation);
+console.log(evaluation.micro.PRECISION, evaluation.macro.PRECISION);

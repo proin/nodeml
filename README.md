@@ -6,6 +6,7 @@
 
 - Classification
     - `nodeml.Bayes`: Bayes
+    - `nodeml.kNN`: k-Nearest Neighbor
     - `nodeml.CNN`: Convolutional Neural Network (CNN)
 - Recommendation
     - `nodeml.CF`: User based Collaborative Filtering
@@ -53,6 +54,14 @@ const bbc = sample.bbc();
 // yeast: Function() => { dataset: [ [] , ... ], labels: [ ... ] }
 // yeast dataset, array data
 const yeast = sample.yeast();
+
+// iris: Function() => { dataset: [ [] , ... ], labels: [ ... ] }
+// iris dataset, array data
+const iris = sample.iris();
+
+// movie: Function() => [{ movie_id: '1', user_id: '97', rating: '5', like: '17' }, ...]
+// movie dataset, array data
+const movie = sample.movie();
 ```
 --- 
     
@@ -102,6 +111,56 @@ set pre-trained
 
 ```js
 bayes.setModel(JSON.parse(str));
+```
+
+--- 
+    
+### nodeml.kNN
+
+k-Nearest Neighbor Classifier
+
+```js
+const {kNN} = require('nodeml');
+let knn = new kNN(); 
+```
+
+#### train: Function(dataset, labels) => model
+
+training 
+
+```js
+knn.train([0.2, 0.5, 0.7, 0.4], 1);       
+knn.train({ 'my': 20, 'home': 30 }, 1);   
+
+// training bulk
+knn.train([[2, 5,], [2, 1,]], [1, 2]);    
+knn.train([{ 'my': 20, 'home': 30 }, { 'my': 5, 'home': 10 }], [1, 2]);              
+```
+
+#### test: Function(dataset, k) => [ class1, class2, class1 ] 
+
+classify document (default k is 3)
+
+```js
+let result = knn.test([2, 5, 1, 4]);
+let result = knn.test({'fun': 3, 'fast': 3, 'shoot': 2}, 5);
+```
+
+#### getModel: Function () => model
+
+get trained result
+
+```js
+let model = knn.getModel();
+let str = JSON.stringify(model);
+```
+
+#### setModel: Function (model)
+
+set pre-trained
+
+```js
+knn.setModel(JSON.parse(str));
 ```
 
 ---

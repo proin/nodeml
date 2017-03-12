@@ -1,10 +1,17 @@
 'use strict';
 
-module.exports = (observation, classify)=> {
+module.exports = (observation, classify) => {
     if (observation.length != classify.length)
         throw new Error('NOT SAME');
 
-    const CLASS_SIZE = 8;
+    let cls = {}, CLASS_SIZE = 0;
+    for (let i = 0; i < observation.length; i++) {
+        if (!cls[observation[i]]) {
+            cls[observation[i]] = true;
+            CLASS_SIZE++;
+        }
+    }
+
     const DATA_SIZE = observation.length - 1;
 
     // =================== evaluation matrix ===================
@@ -80,8 +87,8 @@ module.exports = (observation, classify)=> {
         em[key]['F-MEASURE'] = (em[key]['PRECISION'] * em[key]['RECALL'] * 2) / (em[key]['PRECISION'] + em[key]['RECALL']);
         em[key]['ACCURACY'] = (em[key]['TP'] + em[key]['TN']) / (em[key]['TP'] + em[key]['FP'] + em[key]['TN'] + em[key]['FN']);
 
-        macro_averaged['PRECISION'] += em[key]['PRECISION'];
-        macro_averaged['RECALL'] += em[key]['RECALL'];
+        macro_averaged['PRECISION'] += em[key]['PRECISION'] ? em[key]['PRECISION'] : 0;
+        macro_averaged['RECALL'] += em[key]['RECALL'] ? em[key]['RECALL'] : 0;
     }
 
     let accuracy = (sum['TP'] + sum['TN']) / (sum['TP'] + sum['FP'] + sum['TN'] + sum['FN']);
