@@ -88,12 +88,14 @@ module.exports = function () {
 
         let map = {};
         for (let i = 0; i < result.length; i++) {
-            if (typeof map[result[i].label] === 'undefined') map[result[i].label] = 0;
-            map[result[i].label] += result[i].dist;
+            if (typeof map[result[i].label] === 'undefined') map[result[i].label] = {val: 0, cnt: 0};
+            map[result[i].label].val += result[i].dist;
+            map[result[i].label].cnt++;
         }
 
         let selected = null, min = null;
         for (let label in map) {
+            map[label] = map[label].val / map[label].cnt;
             if (min === null) {
                 selected = label;
                 min = map[label];

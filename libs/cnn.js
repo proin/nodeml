@@ -8,7 +8,7 @@ module.exports = function () {
     // utilities
     let return_v = false;
     let v_val = 0.0;
-    let gaussRandom = ()=> {
+    let gaussRandom = () => {
         if (return_v) {
             return_v = false;
             return v_val;
@@ -22,10 +22,10 @@ module.exports = function () {
         return_v = true;
         return u * c;
     };
-    let randf = (a, b)=> Math.random() * (b - a) + a;
-    let randi = (a, b)=> Math.floor(Math.random() * (b - a) + a);
-    let randn = (mu, std)=> mu + gaussRandom() * std;
-    let zeros = (n)=> {
+    let randf = (a, b) => Math.random() * (b - a) + a;
+    let randi = (a, b) => Math.floor(Math.random() * (b - a) + a);
+    let randn = (mu, std) => mu + gaussRandom() * std;
+    let zeros = (n) => {
         if (typeof(n) === 'undefined' || isNaN(n)) return [];
 
         if (typeof ArrayBuffer === 'undefined') {
@@ -37,20 +37,20 @@ module.exports = function () {
 
         return new Float64Array(n);
     };
-    let arrContains = (arr, elt)=> {
+    let arrContains = (arr, elt) => {
         for (let i = 0, n = arr.length; i < n; i++)
             if (arr[i] === elt)
                 return true;
         return false;
     };
-    let arrUnique = (arr)=> {
+    let arrUnique = (arr) => {
         var b = [];
         for (let i = 0, n = arr.length; i < n; i++)
             if (!arrContains(b, arr[i]))
                 b.push(arr[i]);
         return b;
     };
-    let maxmin = (w)=> {
+    let maxmin = (w) => {
         if (w.length === 0)
             return {};
         let maxv = w[0];
@@ -70,7 +70,7 @@ module.exports = function () {
         }
         return {maxi: maxi, maxv: maxv, mini: mini, minv: minv, dv: maxv - minv};
     };
-    let randperm = (n)=> {
+    let randperm = (n) => {
         let i = n;
         let j = 0;
         let temp = null;
@@ -84,7 +84,7 @@ module.exports = function () {
         }
         return array;
     };
-    let weightedSample = (lst, probs)=> {
+    let weightedSample = (lst, probs) => {
         let p = randf(0, 1.0);
         let cumprob = 0.0;
         for (let k = 0, n = lst.length; k < n; k++) {
@@ -93,7 +93,7 @@ module.exports = function () {
                 return lst[k];
         }
     };
-    let getopt = (opt, field_name, default_value)=> typeof opt[field_name] !== 'undefined' ? opt[field_name] : default_value;
+    let getopt = (opt, field_name, default_value) => typeof opt[field_name] !== 'undefined' ? opt[field_name] : default_value;
 
     // Class: Vol
     let Vol = function (sx, sy, depth, c) {
@@ -954,7 +954,7 @@ module.exports = function () {
         }
     };
 
-    let tanh = (x)=> {
+    let tanh = (x) => {
         let y = Math.exp(2 * x);
         return (y - 1) / (y + 1);
     };
@@ -1808,18 +1808,39 @@ module.exports = function () {
     // Class: Functions
     let net = new Net();
 
-    let setModel = (model)=> {
-        if (Array.isArray(model)) net.makeLayers(model);
-        else if (fs.existsSync(model)) net.fromJSON(JSON.parse(fs.readFileSync(model, 'utf-8')));
+    let _labels = {};
+    let _labelIndex = 1;
+    let _labelsReverse = {};
+
+    let makeLayer = (layer) => {
+        net.makeLayers(layer);
     };
-    let getModel = ()=> net.toJSON();
+
+    let setModel = (model) => {
+        if (Array.isArray(model) || model.constructor === Object) {
+            if (model.net) net.makeLayers(model.net);
+            if (model.labelIndex) _labelIndex = model.labelIndex;
+            if (model.labelsReverse) _labelsReverse = model.labelsReverse;
+            if (model.labels) _labels = model.labels;
+        } else if (fs.existsSync(model)) {
+            let m = JSON.parse(fs.readFileSync(model, 'utf-8'));
+            if (m.net) net.fromJSON(m.net);
+            if (m.labelIndex) _labelIndex = m.labelIndex;
+            if (m.labelsReverse) _labelsReverse = m.labelsReverse;
+            if (m.labels) _labels = m.labels;
+        }
+    };
+
+    let getModel = () => {
+        return {net: net.toJSON(), labels: labels, labelsReverse: _labelsReverse, labelIndex: _labelIndex};
+    };
 
     let trainOpts = {};
-    let setOptions = (options)=> trainOpts = options;
+    let setOptions = (options) => trainOpts = options;
 
     let __trainer = null;
 
-    let __checkVolume = (data)=> {
+    let __checkVolume = (data) => {
         if (Array.isArray(data)) {
             data = new Vol(data);
         } else if (typeof data == 'object' && data.constructor !== 'CnnVolume') {
@@ -1831,7 +1852,7 @@ module.exports = function () {
         return data;
     };
 
-    let train = (dataset, labels)=> {
+    let train = (dataset, labels) => {
         if (Array.isArray(dataset) === false) dataset = [dataset];
         else if (typeof dataset[0] != 'object') dataset = [dataset];
         if (Array.isArray(labels) === false) labels = [labels];
@@ -1842,12 +1863,20 @@ module.exports = function () {
         if (!trainOpts.batch_size) trainOpts.batch_size = 2;
         if (!trainOpts.l2_decay) trainOpts.l2_decay = 0.01;
 
+        for (let i = 0; i < labels.length; i++) {
+            if (!_labels[labels[i]]) {
+                _labels[labels[i]] = _labelIndex;
+                _labelsReverse[_labelIndex] = labels[i];
+                _labelIndex++;
+            }
+        }
+
         if (!__trainer) __trainer = new Trainer(net, trainOpts);
         for (let i = 0; i < dataset.length; i++)
-            __trainer.train(__checkVolume(dataset[i]), labels[i] * 1);
+            __trainer.train(__checkVolume(dataset[i]), _labels[labels[i]] - 1);
     };
 
-    let test = (dataset, options)=> {
+    let test = (dataset, options) => {
         if (!options) options = {};
         if (Array.isArray(dataset) === false) dataset = [dataset];
         else if (typeof dataset[0] != 'object') dataset = [dataset];
@@ -1863,10 +1892,11 @@ module.exports = function () {
                 return a.p < b.p ? 1 : -1;
             });
 
+            let ans = _labelsReverse[preds[0].k + 1];
             if (options.score)
-                result.push({answer: preds[0].k, score: preds});
+                result.push({answer: ans, score: preds});
             else
-                result.push(preds[0].k);
+                result.push(ans);
         }
 
         if (result.length == 1) return result[0];
@@ -1874,6 +1904,7 @@ module.exports = function () {
     };
 
     app.configure = setOptions;
+    app.makeLayer = makeLayer;
     app.setModel = setModel;
     app.getModel = getModel;
     app.train = train;

@@ -15,10 +15,10 @@ knn.train({'fly': 2, 'fast': 3, 'shoot': 2, 'love': 1}, 'action');
 let result = knn.test({'fun': 3, 'fast': 3, 'shoot': 2}, true);
 console.log(result);
 
-const bulk = sample.iris();
+const bulk = sample.yeast();
 
 knn.train(bulk.dataset, bulk.labels);
-result = knn.test(bulk.dataset, 5);
+result = knn.test(bulk.dataset, 1);
 let evaluation = evaluate.accuracy(bulk.labels, result);
 
 console.log(evaluation.micro.PRECISION, evaluation.macro.PRECISION);

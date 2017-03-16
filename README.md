@@ -191,7 +191,7 @@ var layer = [];
 layer.push({type: 'input', out_sx: 1, out_sy: 1, out_depth: 8});
 layer.push({type: 'svm', num_classes: 10});
 
-cnn.setModel(layer);
+cnn.makeLayer(layer);
 
 // set pre-trained
 cnn.setModel(JSON.parse(str)); 
