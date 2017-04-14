@@ -3,6 +3,7 @@
 module.exports = function () {
     let app = this;
 
+	// logger
     let assert = (condition, message)=> {
         if (!condition) {
             message = message || "Assertion failed";
@@ -15,17 +16,21 @@ module.exports = function () {
 
     let _trained = null;
 
+	// set previous trained model
     app.setModel = (trained)=> {
         assert(trained.constructor == Object, `dataset undefined`);
         _trained = trained;
     };
 
+	// get trained model
     app.getModel = ()=> _trained;
 
+	// training function
     app.train = (dataset, labels)=> {
         assert(dataset, `dataset undefined`);
         assert(labels, `labels undefined`);
 
+		// check dataset structure
         if (Array.isArray(dataset) === false) dataset = [dataset];
         else if (typeof dataset[0] != 'object') dataset = [dataset];
 
@@ -36,21 +41,31 @@ module.exports = function () {
         if (!_trained) _trained = {};
         if (!_trained.dic) _trained.dic = {};
         if (!_trained.label) _trained.label = {};
-        let _dic = _trained.dic;
-        let _label = _trained.label;
+        
+		let _dic = _trained.dic; // dictionary map
+        let _label = _trained.label; // labels data
 
+		// dataset iteration
         for (let i = 0; i < dataset.length; i++) {
-            let data = dataset[i];
-            let label = labels[i];
+            let data = dataset[i]; // single data row
+            let label = labels[i]; // data's label
 
             let sum = 0;
+
+			// features in data row
             for (let key in data) {
+				// if not contained in dictionary, create map data as zero
                 if (!_dic[key]) _dic[key] = {};
                 if (!_dic[key][label]) _dic[key][label] = 0;
+				
+				// add features value in dictionary
                 _dic[key][label] += data[key] * 1;
-                sum += data[key] * 1;
+                
+				// add features value
+				sum += data[key] * 1;
             }
 
+			// label ratio 
             if (!_label[label]) _label[label] = 0;
             _label[label] += sum;
         }
@@ -58,6 +73,7 @@ module.exports = function () {
         return _trained;
     };
 
+	// predict some data, core calculation function in here.
     app.test = (dataset, options)=> {
         if (!options) options = {};
 
@@ -65,15 +81,19 @@ module.exports = function () {
         if (Array.isArray(dataset) === false) dataset = [dataset];
         else if (typeof dataset[0] != 'object') dataset = [dataset];
 
+		// load trained model
         let _dic = _trained.dic;
         let _label = _trained.label;
 
         let result = [];
 
+		// test dataset iteration
         for (let i = 0; i < dataset.length; i++) {
             let prob = {};
             let data = dataset[i];
-            for (let label in _label) {
+            
+			// calculate prob for each label
+			for (let label in _label) {
                 if (typeof prob[label] === 'undefined') prob[label] = 0;
                 for (let key in data) {
                     let fc = _dic[key] ? _dic[key][label] ? _dic[key][label] * data[key] : 0 : 0;
@@ -85,6 +105,7 @@ module.exports = function () {
             let max = null;
             let answer = null;
 
+			// select max scored label
             for (let label in prob) {
                 if (!max) {
                     max = prob[label];
