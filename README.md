@@ -8,6 +8,8 @@
     - `nodeml.Bayes`: Bayes
     - `nodeml.kNN`: k-Nearest Neighbor
     - `nodeml.CNN`: Convolutional Neural Network (CNN)
+- Clustering
+    - `nodeml.kMeans`: k-Means
 - Recommendation
     - `nodeml.CF`: User based Collaborative Filtering
 - Evaluation
@@ -63,15 +65,15 @@ const iris = sample.iris();
 // movie dataset, array data
 const movie = sample.movie();
 ```
---- 
-    
+---
+
 ### nodeml.Bayes
 
 Naive Bayes classifier
 
 ```js
 const {Bayes} = require('nodeml');
-let bayes = new Bayes(); // this is bayes classfier 
+let bayes = new Bayes(); // this is bayes classfier
 ```
 
 #### train: Function(data, label) => model
@@ -87,7 +89,7 @@ bayes.train([[2, 5,], [2, 1,]], [1, 2]);
 bayes.train([{}, {}], [1, 2]);              
 ```
 
-#### test: Function(data) => { answer: string, score: {} } 
+#### test: Function(data) => { answer: string, score: {} }
 
 classify document
 
@@ -113,20 +115,20 @@ set pre-trained
 bayes.setModel(JSON.parse(str));
 ```
 
---- 
-    
+---
+
 ### nodeml.kNN
 
 k-Nearest Neighbor Classifier
 
 ```js
 const {kNN} = require('nodeml');
-let knn = new kNN(); 
+let knn = new kNN();
 ```
 
 #### train: Function(dataset, labels) => model
 
-training 
+training
 
 ```js
 knn.train([0.2, 0.5, 0.7, 0.4], 1);       
@@ -137,7 +139,7 @@ knn.train([[2, 5,], [2, 1,]], [1, 2]);
 knn.train([{ 'my': 20, 'home': 30 }, { 'my': 5, 'home': 10 }], [1, 2]);              
 ```
 
-#### test: Function(dataset, k) => [ class1, class2, class1 ] 
+#### test: Function(dataset, k) => [ class1, class2, class1 ]
 
 classify document (default k is 3)
 
@@ -194,7 +196,7 @@ layer.push({type: 'svm', num_classes: 10});
 cnn.makeLayer(layer);
 
 // set pre-trained
-cnn.setModel(JSON.parse(str)); 
+cnn.setModel(JSON.parse(str));
 ```
 
 #### train: Function (data, label)
@@ -208,7 +210,7 @@ cnn.train([[2, 5,], [2, 1,]], [1, 2]);
 cnn.train([{}, {}], [1, 2]);   
 ```
 
-#### test: Function(data) => { answer: string, score: {} } 
+#### test: Function(data) => { answer: string, score: {} }
 
 classify document
 
@@ -224,6 +226,61 @@ get trained result
 ```js
 let model = cnn.getModel();
 let str = JSON.stringify(model);
+```
+---
+
+### nodeml.kMeans
+
+k-Means Clustering
+
+```js
+const {kMeans} = require('nodeml');
+let kmeans = new kMeans();
+```
+
+#### train: Function(dataset, options) => model
+
+training
+
+```js
+kmeans.train([[2, 5,], [2, 1,]], {
+    k: 10, dm: 0.00001, iter: 100,  
+    proc: (iter, j, d)=> { console.log(iter, j, d); }
+});
+```
+
+| options | description | type | default |
+|---|---|---|---|
+| init | cluster initialize function: `random`, `fuzzy (preparing)` | string | 'random' |
+| k | number of cluster | integer | 3 |
+| dm | distortion measure | float | 0.00 |
+| iter | maximum iteration | integer | unlimited |
+| labels | supervised learning, if labels exists, detect k automatically | array | null |
+| proc | process handler | function | null |
+
+#### test: Function(dataset) => [ class1, class2, class1 ]
+
+classify document (default k is 3)
+
+```js
+let result = kmeans.test([[2, 5,], [2, 1,]]);
+```
+
+#### getModel: Function () => model
+
+get trained result
+
+```js
+let model = kmeans.getModel();
+let str = JSON.stringify(model);
+```
+
+#### setModel: Function (model)
+
+set pre-trained
+
+```js
+kmeans.setModel(JSON.parse(str));
 ```
 
 ---
