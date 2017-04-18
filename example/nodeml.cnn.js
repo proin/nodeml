@@ -15,4 +15,4 @@ cnn.makeLayer(layer);
 cnn.train(bulk.dataset, bulk.labels);
 let result = cnn.test(bulk.dataset);
 let evaluation = evaluate.accuracy(bulk.labels, result);
-console.log(evaluation.micro.PRECISION, evaluation.macro.PRECISION);
+console.log(evaluation.micro.PRECISION);

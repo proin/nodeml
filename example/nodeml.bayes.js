@@ -19,21 +19,11 @@ console.log(result);
 
 bayes = new Bayes();
 
-const bulk = sample.iris();
+const bulk = sample.bbc();
 
 bayes.train(bulk.dataset, bulk.labels);
-result = bayes.test(bulk.dataset, {score: true});
-
-for (let j = 0; j < result.length; j++) {
-    let res = [];
-    for (let key in result[j].score)
-        res.push({cls: key, score: result[j].score[key]});
-    res.sort((a, b) => b.score - a.score);
-    res = res.splice(0, 3);
-    console.log(res);
-    return;
-}
+result = bayes.test(bulk.dataset, {score: false});
 
 let evaluation = evaluate.accuracy(bulk.labels, result);
 
-console.log(evaluation.micro.PRECISION, evaluation.macro.PRECISION);
+console.log(evaluation.micro.PRECISION);

@@ -1,5 +1,16 @@
 'use strict';
 
+let kmeans = ()=> {
+	const {evaluate, kMeans, sample} = require('../index');
+	const dataset = sample.iris();
+	let kmeans = new kMeans();
+	kmeans.train(dataset.dataset, { labels: dataset.labels });
+	let result = kmeans.test(dataset.dataset);
+
+	let evaluation = evaluate.accuracy(dataset.labels, result);
+	console.log('k-Means', Math.round(evaluation.micro.PRECISION * 10000) / 100);
+};
+
 let cnn = () => {
     const {evaluate, CNN, sample} = require('../index');
 
@@ -42,3 +53,4 @@ let bayes = () => {
 bayes();
 cnn();
 knn();
+kmeans();
