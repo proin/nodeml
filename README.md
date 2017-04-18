@@ -4,14 +4,16 @@
 
 ## Summary
 
+- Feature Selection
+	- `nodeml.feature.tfidf`: [tfidf](https://github.com/proin/nodeml/blob/master/example/tfidf.js)
 - Classification
-    - `nodeml.Bayes`: Bayes
-    - `nodeml.kNN`: k-Nearest Neighbor
-    - `nodeml.CNN`: Convolutional Neural Network (CNN)
+    - `nodeml.Bayes`: [Bayes](https://github.com/proin/nodeml/blob/master/example/nodeml.bayes.js)
+    - `nodeml.kNN`: [k-Nearest Neighbor](https://github.com/proin/nodeml/blob/master/example/nodeml.knn.js)
+    - `nodeml.CNN`: [Convolutional Neural Network (CNN)](https://github.com/proin/nodeml/blob/master/example/nodeml.cnn.js)
 - Clustering
-    - `nodeml.kMeans`: k-Means
+    - `nodeml.kMeans`: [k-Means](https://github.com/proin/nodeml/blob/master/example/nodeml.kmeans.js)
 - Recommendation
-    - `nodeml.CF`: User based Collaborative Filtering
+    - `nodeml.CF`: [User based Collaborative Filtering](https://github.com/proin/nodeml/blob/master/example/nodeml.cf.js)
 - Evaluation
     - `nodeml.accuracy`: Precision, Recall, F-Measure, Accuracy
     - `nodeml.ndcg`: NDCG

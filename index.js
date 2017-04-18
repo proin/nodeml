@@ -1,7 +1,12 @@
 'use strict';
 
 ((app) => {
+	// sample
     app.sample = require('./libs/sample');
+
+	// feature selection
+	app.feature = {};
+	app.feature.tfidf = require('./libs/feature-selection/tfidf');
 
     // classification
     app.bayes = app.Bayes = require('./libs/bayes');
