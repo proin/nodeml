@@ -18,6 +18,13 @@
     - `nodeml.accuracy`: Precision, Recall, F-Measure, Accuracy
     - `nodeml.ndcg`: NDCG
 
+## Todo
+
+- DBSCAN
+- Support Vector Machine
+- LSTM
+- Logistic Regression
+
 ## Installation
 
 installation on your project
